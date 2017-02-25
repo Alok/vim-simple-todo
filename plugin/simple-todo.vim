@@ -44,8 +44,17 @@ endif
 " }}}
 " Private functions {{{
 
-fu! s:get_list_marker(linenr) " {{{
-  return substitute(getline(a:linenr), '^\s*\([-+*]\?\s*\).*', '\1', '')
+" Returns a list symbol found at the line number if is specified and
+" the default symbol otherwise.
+"
+" Arguments:
+" - an optional line number used to search list symbol.
+fu! s:get_list_marker(...) " {{{
+  if a:0
+    return substitute(getline(a:1), '^\s*\([-+*]\?\s*\).*', '\1', '')
+  else
+    return g:simple_todo_list_symbol
+  endif
 endfu " }}}
 
 fu! s:go(type, ...) abort " {{{
@@ -94,8 +103,8 @@ nnore <silent> <Plug>(simple-todo-new) i[ ]<space>
 inore <silent> <Plug>(simple-todo-new) [ ]<space>
 
 " Create a new item with some list prefix symbol
-nnore <silent> <Plug>(simple-todo-new-list-item) "=g:simple_todo_list_symbol.' [ ] '<cr>pa
-inore <silent> <Plug>(simple-todo-new-list-item) <Esc>"=g:simple_todo_list_symbol.' [ ] '<cr>pa
+nnore <silent> <Plug>(simple-todo-new-list-item) i<c-r>=<SID>get_list_marker()<cr><space>[ ]<space>a
+inore <silent> <Plug>(simple-todo-new-list-item) <c-r>=<SID>get_list_marker()<cr><space>[ ]<space>
 
 " Create a new item at the start of this line
 inore <silent> <Plug>(simple-todo-new-start-of-line) <Esc>mzI<c-r>=<SID>get_list_marker(line('.')-1)<cr>[ ]<space><Esc>`z4la
@@ -103,9 +112,9 @@ nnore <silent> <Plug>(simple-todo-new-start-of-line) mzI<c-r>=<SID>get_list_mark
 vnore <silent> <Plug>(simple-todo-new-start-of-line) I<c-r>=<SID>get_list_marker(line('.')-1)<cr>[ ]<space>
 
 " Create a new item with some list prefix symbol at the start of this line
-nnore <silent> <Plug>(simple-todo-new-list-item-start-of-line) mzI<c-r>=g:simple_todo_list_symbol<cr><space>[ ]<space><Esc>`z6l
-inore <silent> <Plug>(simple-todo-new-list-item-start-of-line) <Esc>mzI<c-r>=g:simple_todo_list_symbol<cr><space>[ ]<space><Esc>`z6la
-vnore <silent> <Plug>(simple-todo-new-list-item-start-of-line) I<c-r>=g:simple_todo_list_symbol<cr><space>[ ]<space>
+nnore <silent> <Plug>(simple-todo-new-list-item-start-of-line) mzI<c-r>=<SID>get_list_marker()<cr><space>[ ]<space><Esc>`z6l
+inore <silent> <Plug>(simple-todo-new-list-item-start-of-line) <Esc>mzI<c-r>=<SID>get_list_marker()<cr><space>[ ]<space><Esc>`z6la
+vnore <silent> <Plug>(simple-todo-new-list-item-start-of-line) I<c-r>=<SID>get_list_marker()<cr><space>[ ]<space>
 
 " Create a new item below
 nnore <silent> <Plug>(simple-todo-below) o<c-r>=<SID>get_list_marker(line('.')-1)<cr>[ ]<space>
